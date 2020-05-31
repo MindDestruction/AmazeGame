@@ -1,3 +1,5 @@
+
+
 class Maze {
   
   int[][] maze;
@@ -9,8 +11,6 @@ class Maze {
   float oldplayerCoordY;
   float playerCoordX;
   float playerCoordY;
-  float speedX = 0.1;
-  float speedY = 0.1;
   float tileSize;
   float playerSize;
   
@@ -46,6 +46,7 @@ class Maze {
       this.oldPlayerX = tempoldPlayerX;
       this.oldPlayerY = tempoldPlayerY;
       animation = animationStart = true;
+      swoosh.play();
     }
   }
   
@@ -108,8 +109,8 @@ class Maze {
     
     // Ändere Koordinaten um ein kleines Stückchen (Animation)
     if (animation) {
-      oldplayerCoordX -= (oldplayerCoordX - playerCoordX)*speedX;
-      oldplayerCoordY -= (oldplayerCoordY - playerCoordY)*speedY;
+      oldplayerCoordX -= (oldplayerCoordX - playerCoordX)*playerSpeed;
+      oldplayerCoordY -= (oldplayerCoordY - playerCoordY)*playerSpeed;
     }
     
     // Zeichne den Spieler
