@@ -30,7 +30,7 @@ float currentBackgroundVolume = 0;
 float volumeFadeSpeed = 0.001;
 float maxVolume = 0.8;
 boolean showingMenu = true;
-color[] playerColors = { color(106, 137, 204), color(183, 21, 64) };
+color[] playerColors = { color(0, 102, 153), color(183, 21, 64) };
 String[] playerNames = {"Bjørn", "Alfhild"};
 int playerWon = -1;
 HashMap<String, Integer> treasure = new HashMap<String, Integer>() {{
@@ -48,6 +48,7 @@ SoundFile[] backgroundMusic = new SoundFile[3];
 
 void setup() {
   size(1280, 720);
+  //fullScreen();
   frameRate(30);
   
   zorque = createFont("assets/zorque.ttf", 32);
@@ -59,8 +60,14 @@ void setup() {
   backgroundMusic[1] = new SoundFile(this, "assets/music2.wav");
   backgroundMusic[2] = new SoundFile(this, "assets/music3.wav");
   
+  initGame();
+  showingMenu = true;
+}
+
+void initGame() {
   mazes[0] = new Maze(Samples.maze0, Samples.startX0, Samples.startY0, Samples.startX0, Samples.startY0, Samples.endX0, Samples.endY0, tileSize, playerInitialSize);
   mazes[1] = new Maze(Samples.maze0, Samples.startX0, Samples.startY0, Samples.startX0, Samples.startY0, Samples.endX0, Samples.endY0, tileSize, playerInitialSize);
+  playerWon = -1;
 }
 
 void draw() {
@@ -94,6 +101,7 @@ void keyPressed() {
       showingMenu = !showingMenu; 
       menutoggle.play();
     break;
+    case 'n': initGame(); break;
     case ' ': currentPlayer = (currentPlayer+1)%maxPlayer;
   }
 }
