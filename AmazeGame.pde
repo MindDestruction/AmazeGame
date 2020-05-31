@@ -33,11 +33,17 @@ boolean showingMenu = true;
 color[] playerColors = { color(106, 137, 204), color(183, 21, 64) };
 String[] playerNames = {"Bjørn", "Alfhild"};
 int playerWon = -1;
+HashMap<String, Integer> treasure = new HashMap<String, Integer>() {{
+    put("hint", 2);
+    put("movingWall", 3);
+    put("blindness", 4);
+    put("randomPerk", 5); // ...
+}};
 
 Menu menu = new Menu();
 PFont zorque;
 Maze[] mazes = new Maze[2];
-SoundFile swoosh, currentBackgroundMusic;
+SoundFile swoosh, currentBackgroundMusic, menutoggle;
 SoundFile[] backgroundMusic = new SoundFile[3];
 
 void setup() {
@@ -48,6 +54,7 @@ void setup() {
   textFont(zorque);
   
   swoosh = new SoundFile(this, "assets/swoosh.wav");
+  menutoggle = new SoundFile(this, "assets/menutoggle.wav");
   backgroundMusic[0] = new SoundFile(this, "assets/music1.wav");
   backgroundMusic[1] = new SoundFile(this, "assets/music2.wav");
   backgroundMusic[2] = new SoundFile(this, "assets/music3.wav");
@@ -83,7 +90,10 @@ void keyPressed() {
     case 's': mazes[currentPlayer].sprintPlayer('s'); break;
     case 'a': mazes[currentPlayer].sprintPlayer('w'); break;
     case 'd': mazes[currentPlayer].sprintPlayer('o'); break;
-    case 'm': showingMenu = !showingMenu; break;
+    case 'm': 
+      showingMenu = !showingMenu; 
+      menutoggle.play();
+    break;
     case ' ': currentPlayer = (currentPlayer+1)%maxPlayer;
   }
 }
@@ -113,7 +123,7 @@ void manageBackgroundMusic() {
   if (frameCount % 100 == 0 && !isPlaying(backgroundMusic) || currentBackgroundMusic == null) {
     currentBackgroundMusic = backgroundMusic[int(random(backgroundMusic.length))];
     currentBackgroundMusic.amp(currentBackgroundVolume = 0);
-    //currentBackgroundMusic.play();
+    currentBackgroundMusic.play();
   }
   
   currentBackgroundMusic.amp(currentBackgroundVolume);

@@ -13,6 +13,10 @@ class Maze {
   float playerCoordY;
   float tileSize;
   float playerSize;
+  Loot[] loot = {
+    new Loot(11, 1, 2),
+    new Loot(1, 8, 2)
+  };
   
   // Erstelle das Labyrinth
   public Maze(int[][] maze, int playerX, int playerY, int startX, int startY, int endX, int endY, float tileSize, float playerInitialSize) {
@@ -127,6 +131,12 @@ class Maze {
     }
   }
   
+  void drawTreasure(int X, int Y) {
+    for (Loot l : loot) {
+      l.draw(X, Y);
+    }
+  }
+  
   // Zeichne das Labyrinth & den Spieler
   void draw(int X, int Y, float tileRadius, float tileGap, color playerColor) {
     fill(200);
@@ -140,6 +150,7 @@ class Maze {
     }
     
     // Zeichne den Spieler
+    drawTreasure(X, Y);
     drawPlayer(X, Y, playerColor);
   }
   
@@ -150,4 +161,12 @@ class Maze {
   float getPlayerPositionY() {
     return animation? oldplayerCoordY:playerCoordY;
   }
+}
+
+float getAbsoluteCoordinatesFromMazeX(int x, float offX) {
+  return (x+1)*tileSize + offX + 2*x - tileSize/2;
+}
+  
+float getAbsoluteCoordinatesFromMazeY(int y, float offY) {
+  return (y+1)*tileSize + offY + 2*y - tileSize/2;
 }
