@@ -6,6 +6,7 @@ import processing.sound.*;
     d: Rechts / Osten
     s: Unten / Süden
     a: Links / Westen
+    m: Menü öffnen/schließen
     Leertaste: Spieler wechsel
   IDEEN:
    - Sich bewegende Wände
@@ -18,17 +19,20 @@ import processing.sound.*;
 // Einstellungen
 int currentPlayer = 0;
 int maxPlayer = 2;
-float tileSize = 25;
+float tileSize = 35;
 float tileRadius = 6;
 float tileGap = 2;
 float playerBreatheIntensity = 1.5;
 float playerBreatheSpeed = 2.5;
-float playerSpeed = 0.15;
+float playerSpeed = 0.18;
 float playerInitialSize = tileSize / 2f;
 float currentBackgroundVolume = 0;
 float volumeFadeSpeed = 0.001;
 float maxVolume = 0.8;
-color[] playerColors = new color[]{ color(106, 137, 204), color(183, 21, 64) };
+boolean showingMenu = true;
+color[] playerColors = { color(106, 137, 204), color(183, 21, 64) };
+String[] playerNames = {"Bjørn", "Alfhild"};
+int playerWon = -1;
 
 Menu menu = new Menu();
 PFont zorque;
@@ -37,7 +41,7 @@ SoundFile swoosh, currentBackgroundMusic;
 SoundFile[] backgroundMusic = new SoundFile[3];
 
 void setup() {
-  size(1080, 720);
+  size(1280, 720);
   frameRate(30);
   
   zorque = createFont("assets/zorque.ttf", 32);
@@ -57,17 +61,18 @@ void draw() {
   translate(width/2, height/2);
   noStroke();
   
-  mazes[0].draw(-450, -150, tileRadius, tileGap, playerColors[0]);
-  mazes[1].draw(100, -150, tileRadius, tileGap, playerColors[1]);
+  mazes[0].draw(-550, -180, tileRadius, tileGap, playerColors[0]);
+  mazes[1].draw(80, -180, tileRadius, tileGap, playerColors[1]);
   
   // Das fügt dunkelheit ins spiel ein
-  applyAreaFilter(mazes[currentPlayer].getPlayerPositionX(), mazes[currentPlayer].getPlayerPositionY(), 0.25, 1.8);
+  applyAreaFilter(mazes[currentPlayer].getPlayerPositionX(), mazes[currentPlayer].getPlayerPositionY(), 0.25, showingMenu? 0 : 1.8);
   breathePlayer();
-  menu.draw();
+  if (showingMenu) menu.drawMenu();
+  if (playerWon >= 0) menu.drawWon(playerNames[currentPlayer], playerColors[currentPlayer]);
   
   manageBackgroundMusic();
   
-  if (frameCount % 30 == 0) println(frameRate, " FPS");
+  //if (frameCount % 30 == 0) println(frameRate, " FPS");
 }
 
 // Wenn eine Taste gedrückt wurde
@@ -78,6 +83,7 @@ void keyPressed() {
     case 's': mazes[currentPlayer].sprintPlayer('s'); break;
     case 'a': mazes[currentPlayer].sprintPlayer('w'); break;
     case 'd': mazes[currentPlayer].sprintPlayer('o'); break;
+    case 'm': showingMenu = !showingMenu; break;
     case ' ': currentPlayer = (currentPlayer+1)%maxPlayer;
   }
 }

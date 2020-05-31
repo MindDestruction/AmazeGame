@@ -111,6 +111,10 @@ class Maze {
     if (animation) {
       oldplayerCoordX -= (oldplayerCoordX - playerCoordX)*playerSpeed;
       oldplayerCoordY -= (oldplayerCoordY - playerCoordY)*playerSpeed;
+    } else {
+      if (playerX == endX && playerY == endY) {
+        playerWon = currentPlayer;
+      }
     }
     
     // Zeichne den Spieler

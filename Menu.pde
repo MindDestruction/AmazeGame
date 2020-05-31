@@ -1,7 +1,6 @@
 class Menu {
   
-  void draw() {
-    
+  void drawMenu() {
     fill(0, 102, 153, 245);
     
     textSize(50);
@@ -14,8 +13,13 @@ class Menu {
     text("ING", 100, -50); 
     
     textSize(100);
-    text("GAME", -30, 50); 
-    
+    text("GAME", -30, 50);
   }
   
+  void drawWon(String player, color playerColor) {
+    fill(playerColor);
+    textSize(100);
+    text(player, -200, -50); 
+    text("WON", -100, 50); 
+  }
 }
