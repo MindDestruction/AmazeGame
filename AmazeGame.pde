@@ -11,7 +11,7 @@ import processing.sound.*;
   IDEEN:
    - Sich bewegende Wände
    - Taschenlampe
-   - Hinweise
+   -  mehrere Hinweise
    - Ein Zug aussetzten
    - Sounds
 */
