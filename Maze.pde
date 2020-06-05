@@ -3,32 +3,17 @@
 class Maze {
   
   int[][] maze;
-  int playerX, playerY, oldPlayerX, oldPlayerY, sizeX, sizeY, startX, startY, endX, endY;
-  boolean animation = false;
-  boolean animationStart = false;
+  int sizeX, sizeY, endX, endY;
   boolean positionActionTriggered = false;
-  float oldplayerCoordX; 
-  float oldplayerCoordY;
-  float playerCoordX;
-  float playerCoordY;
   float tileSize;
-  float playerSize;
-  Loot[] loot = {
-    new Loot(11, 1, 2),
-    new Loot(1, 8, 2)
-  };
+  
   
   // Erstelle das Labyrinth
-  public Maze(int[][] maze, int playerX, int playerY, int startX, int startY, int endX, int endY, float tileSize, float playerInitialSize) {
+  public Maze(int[][] maze, int endX, int endY, float tileSize) {
     this.maze = maze;
-    this.playerX = this.oldPlayerX = playerX;
-    this.playerY = this.oldPlayerY = playerY;
-    this.startX = startX;
-    this.startY = startY;
     this.endX = endX;
     this.endY = endY;
     this.tileSize = tileSize;
-    this.playerSize = playerInitialSize;
     this.sizeY = maze.length;
     this.sizeX = maze[0].length;
   }
@@ -36,8 +21,8 @@ class Maze {
   // Bewege Spieler in eine Richtung bis es nicht mehr geht
   void sprintPlayer(char dir) {
     boolean start = true;
-    int tempoldPlayerX = playerX;
-    int tempoldPlayerY = playerY;
+    int tempoldPlayerX = players[currentPlayer].playerX;
+    int tempoldPlayerY = players[currentPlayer].playerY;
     
     // Bewege den Spieler solange bis er anhalten muss (wegen Wand, Kreuzung, Ende, etc.)
     while (movePlayer(dir, start)) {
@@ -46,10 +31,10 @@ class Maze {
     }
     
     // Wenn der Spieler sich nicht bewegt hat, sollen die Koordinaten den letzten Zuges nicht geändert werden
-    if (tempoldPlayerY != playerY || tempoldPlayerX != playerX) {
-      this.oldPlayerX = tempoldPlayerX;
-      this.oldPlayerY = tempoldPlayerY;
-      animation = animationStart = true;
+    if (tempoldPlayerY != players[currentPlayer].playerY || tempoldPlayerX != players[currentPlayer].playerX) {
+      players[currentPlayer].oldPlayerX = tempoldPlayerX;
+      players[currentPlayer].oldPlayerY = tempoldPlayerY;
+      players[currentPlayer].animation = players[currentPlayer].animationStart = true;
       swoosh.play();
     }
   }
@@ -59,17 +44,17 @@ class Maze {
   boolean movePlayer(char dir, boolean start) {
     
     // Wenn der Spieler an einer Kreuzung ist. Einmal halten bitte!
-    if (isCrossing(playerX, playerY, dir) && !start) return false;
+    if (isCrossing(players[currentPlayer].playerX, players[currentPlayer].playerY, dir) && !start) return false;
     
     // Wenn vor dem Spieler eine Wand ist. Einmal halten bitte!
     if (isWallUpfront(dir)) return false;
     
     // Bewege Spieler in die angegebene Richtung (Nord, West, Ost, Süd)
     switch (dir) {
-      case 'n': playerY--; break;
-      case 'w': playerX--; break;
-      case 'o': playerX++; break;
-      case 's': playerY++; break;
+      case 'n': players[currentPlayer].playerY--; break;
+      case 'w': players[currentPlayer].playerX--; break;
+      case 'o': players[currentPlayer].playerX++; break;
+      case 's': players[currentPlayer].playerY++; break;
     }
     return true;
   }
@@ -77,10 +62,10 @@ class Maze {
   // Überprüft ob vor dem Spieler eine Wand ist
   boolean isWallUpfront(char dir) {
     switch (dir) {
-      case 'n': return !(playerY-1 >= 0 && maze[playerY-1][playerX] == 0);
-      case 'w': return !(playerX-1 >= 0 && maze[playerY][playerX-1] == 0);
-      case 'o': return !(playerX+1 < sizeX && maze[playerY][playerX+1] == 0);
-      case 's': return !(playerY+1 < sizeY && maze[playerY+1][playerX] == 0);
+      case 'n': return !(players[currentPlayer].playerY-1 >= 0 && maze[players[currentPlayer].playerY-1][players[currentPlayer].playerX] == 0);
+      case 'w': return !(players[currentPlayer].playerX-1 >= 0 && maze[players[currentPlayer].playerY][players[currentPlayer].playerX-1] == 0);
+      case 'o': return !(players[currentPlayer].playerX+1 < sizeX && maze[players[currentPlayer].playerY][players[currentPlayer].playerX+1] == 0);
+      case 's': return !(players[currentPlayer].playerY+1 < sizeY && maze[players[currentPlayer].playerY+1][players[currentPlayer].playerX] == 0);
     }
     return true;
   }
@@ -100,34 +85,34 @@ class Maze {
   }
   
   // Zeichnet den Spieler
-  void drawPlayer(int X, int Y, color playerColor) {
+  void drawPlayer(Player player, int X, int Y, color playerColor) {
     
     // Wenn animiert wird, sollen die Koordinaten nicht immer zurückgesetzt werden
-    if (animationStart || !animation) {
-      animationStart = false;
-      playerCoordX = (playerX+1)*tileSize + X + 2*playerX - tileSize/2;
-      playerCoordY = (playerY+1)*tileSize + Y + 2*playerY - tileSize/2;
-      oldplayerCoordX = (oldPlayerX+1)*tileSize + X + 2*oldPlayerX - tileSize/2;
-      oldplayerCoordY = (oldPlayerY+1)*tileSize + Y + 2*oldPlayerY - tileSize/2;
+    if (player.animationStart || !player.animation) {
+      player.animationStart = false;
+      player.pCoordX = (player.playerX+1)*tileSize + X + 2*player.playerX - tileSize/2;
+      player.pCoordY = (player.playerY+1)*tileSize + Y + 2*player.playerY - tileSize/2;
+      player.oldpCoordX = (player.oldPlayerX+1)*tileSize + X + 2*player.oldPlayerX - tileSize/2;
+      player.oldpCoordY = (player.oldPlayerY+1)*tileSize + Y + 2*player.oldPlayerY - tileSize/2;
     }
     
     // Ändere Koordinaten um ein kleines Stückchen (Animation)
-    if (animation) {
-      oldplayerCoordX -= (oldplayerCoordX - playerCoordX)*playerSpeed;
-      oldplayerCoordY -= (oldplayerCoordY - playerCoordY)*playerSpeed;
+    if (player.animation) {
+      player.oldpCoordX -= (player.oldpCoordX - player.pCoordX)*playerSpeed;
+      player.oldpCoordY -= (player.oldpCoordY - player.pCoordY)*playerSpeed;
     } else {
-      if (playerX == endX && playerY == endY) {
+      if (player.playerX == endX && player.playerY == endY) {
         playerWon = currentPlayer;
       }
     }
     
     // Zeichne den Spieler
     fill(playerColor);
-    circle(getPlayerPositionX(), getPlayerPositionY(), playerSize);
+    circle(getPlayerPositionX(player), getPlayerPositionY(player), player.size);
     
     // Wenn Spieler den Zug beendet hat (Beende die Animation)
-    if (Math.abs(oldplayerCoordX-playerCoordX)<0.3 && Math.abs(oldplayerCoordY-playerCoordY)<0.3) {
-      animation = false;
+    if (Math.abs(player.oldpCoordX-player.pCoordX)<0.3 && Math.abs(player.oldpCoordY-player.pCoordY)<0.3) {
+      player.animation = false;
     }
   }
   
@@ -138,7 +123,7 @@ class Maze {
   }
   
   // Zeichne das Labyrinth & den Spieler
-  void draw(int X, int Y, float tileRadius, float tileGap, color playerColor) {
+  void draw(int X, int Y, float tileRadius, float tileGap) {
     fill(200);
     for (int x=0; x<sizeX; x++) {
       for (int y=0; y<sizeY; y++) {
@@ -151,15 +136,16 @@ class Maze {
     
     // Zeichne den Spieler
     drawTreasure(X, Y);
-    drawPlayer(X, Y, playerColor);
+    drawPlayer(players[(currentPlayer+1)%2], X, Y, playerColors[(currentPlayer+1)%2]);
+    drawPlayer(players[currentPlayer], X, Y, playerColors[currentPlayer]);
   }
   
-  float getPlayerPositionX() {
-    return animation? oldplayerCoordX:playerCoordX;
+  float getPlayerPositionX(Player player) {
+    return player.animation? player.oldpCoordX : player.pCoordX;
   }
   
-  float getPlayerPositionY() {
-    return animation? oldplayerCoordY:playerCoordY;
+  float getPlayerPositionY(Player player) {
+    return player.animation? player.oldpCoordY : player.pCoordY;
   }
 }
 
