@@ -7,7 +7,6 @@ class Maze {
   boolean positionActionTriggered = false;
   float tileSize;
   
-  
   // Erstelle das Labyrinth
   public Maze(int[][] maze, int endX, int endY, float tileSize) {
     this.maze = maze;
@@ -124,12 +123,12 @@ class Maze {
   
   // Zeichne das Labyrinth & den Spieler
   void draw(int X, int Y, float tileRadius, float tileGap) {
-    fill(200);
     for (int x=0; x<sizeX; x++) {
       for (int y=0; y<sizeY; y++) {
         if (maze[y][x] == 0) continue;
         float coordX = x*tileSize + X + tileGap*x;
         float coordY = y*tileSize + Y + tileGap*y;
+        fill(Samples.tileColors[y][x]);
         rect(coordX, coordY, tileSize, tileSize, tileRadius);
       }
     }

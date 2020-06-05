@@ -21,5 +21,5 @@ static class Samples {
     {1,0,0,0,0,0,0,0,0,0,1,0,1},
     {1,1,1,1,1,1,1,1,1,1,1,0,1}
   };
-
+  static color[][] tileColors = new color[maze0.length][maze0[0].length];
 }

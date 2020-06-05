@@ -19,7 +19,7 @@ import processing.sound.*;
 // Einstellungen
 int currentPlayer = 0;
 int maxPlayer = 2;
-float tileSize = 35;
+float tileSize = 60;
 float tileRadius = 6;
 float tileGap = 2;
 float playerBreatheIntensity = 1.5;
@@ -54,9 +54,9 @@ SoundFile[] backgroundMusic = new SoundFile[3];
 Player[] players = new Player[2];
 
 void setup() {
-  size(1280, 720);
+  size(1000, 1000);
   //fullScreen();
-  frameRate(30);
+  //frameRate(30);
   
   zorque = createFont("assets/zorque.ttf", 32);
   textFont(zorque);
@@ -71,7 +71,6 @@ void setup() {
   menutoggle.amp(maxVolume);
   
   initGame();
-  showingMenu = true;
 }
 
 void initGame() {
@@ -79,24 +78,26 @@ void initGame() {
   players[1] = new Player(Samples.startXB0, Samples.startYB0, playerInitialSize, playerBreatheIntensity, playerBreatheSpeed);
   maze = new Maze(Samples.maze0, Samples.endX0, Samples.endY0, tileSize);
   playerWon = -1;
+  showingMenu = true;
 }
 
 void draw() {
-  background(30, 39, 46);
-  translate(width/2, height/2);
+  translate(width/2-maze.getPlayerPositionX(players[currentPlayer]), height/2-maze.getPlayerPositionY(players[currentPlayer]));
   noStroke();
   
-  maze.draw(-550, -180, tileRadius, tileGap);
+  applyAreaFilter(0, 0, 0.25, showingMenu? 0 : 1.8);
+  background(30, 39, 46);
+  maze.draw(-width/2+100, (int)(-height/2f+(maze.sizeY*tileSize+maze.sizeY*tileGap)/2f), tileRadius, tileGap);
   
   // Das fügt dunkelheit ins spiel ein
-  applyAreaFilter(maze.getPlayerPositionX(players[currentPlayer]), maze.getPlayerPositionY(players[currentPlayer]), 0.25, showingMenu? 0 : 1.8);
-  breathePlayer();
+  //applyAreaFilter(0, 0, 0.25, showingMenu? 0 : 1.8);
+  //breathePlayer();
   if (showingMenu) menu.drawMenu();
   if (playerWon >= 0) menu.drawWon(playerNames[currentPlayer], playerColors[currentPlayer]);
   
   manageBackgroundMusic();
   
-  //if (frameCount % 30 == 0) println(frameRate, " FPS");
+  if (frameCount % 30 == 0) println(frameRate, " FPS");
 }
 
 // Wenn eine Taste gedrückt wurde
@@ -107,7 +108,7 @@ void keyPressed() {
     case 'a': maze.sprintPlayer('w'); break;
     case 'd': maze.sprintPlayer('o'); break;
     case 'm': 
-      showingMenu = !showingMenu; 
+      showingMenu = !showingMenu;
       menutoggle.play();
     break;
     case 'n': initGame(); break;
@@ -122,14 +123,22 @@ void breathePlayer() {
 
 // Das fügt dunkelheit ins spiel ein
 void applyAreaFilter(float fx, float fy, float radius, float strength) {
-  loadPixels();
+  
+  for (int x=0; x<maze.sizeX; x++) {
+    for (int y=0; y<maze.sizeY; y++) {
+      float dist = radius-dist(x, y, players[currentPlayer].playerX, players[currentPlayer].playerY)/Math.max(maze.sizeX, maze.sizeY);
+      Samples.tileColors[y][x] = color(200, 200, 200, dist*255f*strength);
+    }
+  }
+  
+  /*loadPixels();
   for (int i = 0; i < width*height; i++) {
     int x = i % width;
     int y = i / width;
     float f = (radius-(dist(fx+width/2, fy+height/2, x, y)/height))*strength;
     pixels[i] = color(red(pixels[i])*f, green(pixels[i])*f, blue(pixels[i])*f);
   }
-  updatePixels();
+  updatePixels();*/
 }
 
 // Das ist die Musik Logik
