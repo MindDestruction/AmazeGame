@@ -3,8 +3,10 @@
 // Gang = 0
 static class Samples {
   
-  static int startX0 = 11;
-  static int startY0 = 9;
+  static int startXA0 = 11;
+  static int startYA0 = 9;
+  static int startXB0 = 11;
+  static int startYB0 = 5;
   static int endX0 = 1;
   static int endY0 = 0;
   static int[][] maze0 = new int[][]{
