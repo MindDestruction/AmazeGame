@@ -28,17 +28,23 @@ float playerSpeed = 0.18;
 float playerInitialSize = tileSize / 2f;
 float currentBackgroundVolume = 0;
 float volumeFadeSpeed = 0.001;
-float maxVolume = 0.6;
+final float maxVolume = 0.4;
 boolean showingMenu = true;
 color[] playerColors = { color(0, 102, 153), color(183, 21, 64) };
 String[] playerNames = {"Bjørn", "Alfhild"};
 int playerWon = -1;
 HashMap<String, Integer> treasure = new HashMap<String, Integer>() {{
-    put("hint", 2);
+    //  typeName,     typeId
+    put("hint",       2);
     put("movingWall", 3);
-    put("blindness", 4);
+    put("blindness",  4);
     put("randomPerk", 5); // ...
 }};
+Loot[] loot = {
+  //        x, y, typeId
+  new Loot(11, 1, 2), 
+  new Loot(1,  8, 2)
+};
 
 Menu menu = new Menu();
 PFont zorque;
@@ -60,6 +66,9 @@ void setup() {
   backgroundMusic[0] = new SoundFile(this, "assets/music1.wav");
   backgroundMusic[1] = new SoundFile(this, "assets/music2.wav");
   backgroundMusic[2] = new SoundFile(this, "assets/music3.wav");
+  
+  swoosh.amp(maxVolume);
+  menutoggle.amp(maxVolume);
   
   initGame();
   showingMenu = true;
@@ -92,7 +101,6 @@ void draw() {
 
 // Wenn eine Taste gedrückt wurde
 void keyPressed() {
-  if (players[currentPlayer].animation) return;
   switch (key) {
     case 'w': maze.sprintPlayer('n'); break;
     case 's': maze.sprintPlayer('s'); break;
@@ -126,8 +134,9 @@ void applyAreaFilter(float fx, float fy, float radius, float strength) {
 
 // Das ist die Musik Logik
 void manageBackgroundMusic() {  
-  if (currentBackgroundVolume<=maxVolume)
+  if (currentBackgroundVolume<=maxVolume*0.3)
     currentBackgroundVolume += volumeFadeSpeed;
+  if (currentBackgroundVolume > maxVolume*0.3) currentBackgroundVolume = maxVolume*0.3;
   
   if (frameCount % 100 == 0 && !isPlaying(backgroundMusic) || currentBackgroundMusic == null) {
     currentBackgroundMusic = backgroundMusic[int(random(backgroundMusic.length))];

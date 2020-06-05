@@ -3,17 +3,10 @@
 class Maze {
   
   int[][] maze;
-  int playerX, playerY, oldPlayerX, oldPlayerY, sizeX, sizeY, endX, endY;
+  int sizeX, sizeY, endX, endY;
   boolean positionActionTriggered = false;
-  float oldplayerCoordX; 
-  float oldplayerCoordY;
-  float playerCoordX;
-  float playerCoordY;
   float tileSize;
-  Loot[] loot = {
-    new Loot(11, 1, 2),
-    new Loot(1, 8, 2)
-  };
+  
   
   // Erstelle das Labyrinth
   public Maze(int[][] maze, int endX, int endY, float tileSize) {
