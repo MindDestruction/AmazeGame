@@ -4,8 +4,6 @@ class Maze {
   
   int[][] maze;
   int playerX, playerY, oldPlayerX, oldPlayerY, sizeX, sizeY, endX, endY;
-  boolean animation = false;
-  boolean animationStart = false;
   boolean positionActionTriggered = false;
   float oldplayerCoordX; 
   float oldplayerCoordY;
@@ -43,7 +41,7 @@ class Maze {
     if (tempoldPlayerY != players[currentPlayer].playerY || tempoldPlayerX != players[currentPlayer].playerX) {
       players[currentPlayer].oldPlayerX = tempoldPlayerX;
       players[currentPlayer].oldPlayerY = tempoldPlayerY;
-      animation = animationStart = true;
+      players[currentPlayer].animation = players[currentPlayer].animationStart = true;
       swoosh.play();
     }
   }
@@ -94,34 +92,34 @@ class Maze {
   }
   
   // Zeichnet den Spieler
-  void drawPlayer(int X, int Y, color playerColor) {
+  void drawPlayer(Player player, int X, int Y, color playerColor) {
     
     // Wenn animiert wird, sollen die Koordinaten nicht immer zurückgesetzt werden
-    if (animationStart || !animation) {
-      animationStart = false;
-      playerCoordX = (players[currentPlayer].playerX+1)*tileSize + X + 2*players[currentPlayer].playerX - tileSize/2;
-      playerCoordY = (players[currentPlayer].playerY+1)*tileSize + Y + 2*players[currentPlayer].playerY - tileSize/2;
-      oldplayerCoordX = (players[currentPlayer].oldPlayerX+1)*tileSize + X + 2*players[currentPlayer].oldPlayerX - tileSize/2;
-      oldplayerCoordY = (players[currentPlayer].oldPlayerY+1)*tileSize + Y + 2*players[currentPlayer].oldPlayerY - tileSize/2;
+    if (player.animationStart || !player.animation) {
+      player.animationStart = false;
+      player.pCoordX = (player.playerX+1)*tileSize + X + 2*player.playerX - tileSize/2;
+      player.pCoordY = (player.playerY+1)*tileSize + Y + 2*player.playerY - tileSize/2;
+      player.oldpCoordX = (player.oldPlayerX+1)*tileSize + X + 2*player.oldPlayerX - tileSize/2;
+      player.oldpCoordY = (player.oldPlayerY+1)*tileSize + Y + 2*player.oldPlayerY - tileSize/2;
     }
     
     // Ändere Koordinaten um ein kleines Stückchen (Animation)
-    if (animation) {
-      oldplayerCoordX -= (oldplayerCoordX - playerCoordX)*playerSpeed;
-      oldplayerCoordY -= (oldplayerCoordY - playerCoordY)*playerSpeed;
+    if (player.animation) {
+      player.oldpCoordX -= (player.oldpCoordX - player.pCoordX)*playerSpeed;
+      player.oldpCoordY -= (player.oldpCoordY - player.pCoordY)*playerSpeed;
     } else {
-      if (players[currentPlayer].playerX == endX && players[currentPlayer].playerY == endY) {
+      if (player.playerX == endX && player.playerY == endY) {
         playerWon = currentPlayer;
       }
     }
     
     // Zeichne den Spieler
     fill(playerColor);
-    circle(getPlayerPositionX(), getPlayerPositionY(), players[currentPlayer].size);
+    circle(getPlayerPositionX(player), getPlayerPositionY(player), player.size);
     
     // Wenn Spieler den Zug beendet hat (Beende die Animation)
-    if (Math.abs(oldplayerCoordX-playerCoordX)<0.3 && Math.abs(oldplayerCoordY-playerCoordY)<0.3) {
-      animation = false;
+    if (Math.abs(player.oldpCoordX-player.pCoordX)<0.3 && Math.abs(player.oldpCoordY-player.pCoordY)<0.3) {
+      player.animation = false;
     }
   }
   
@@ -132,7 +130,7 @@ class Maze {
   }
   
   // Zeichne das Labyrinth & den Spieler
-  void draw(int X, int Y, float tileRadius, float tileGap, color playerColor) {
+  void draw(int X, int Y, float tileRadius, float tileGap) {
     fill(200);
     for (int x=0; x<sizeX; x++) {
       for (int y=0; y<sizeY; y++) {
@@ -145,15 +143,16 @@ class Maze {
     
     // Zeichne den Spieler
     drawTreasure(X, Y);
-    drawPlayer(X, Y, playerColor);
+    drawPlayer(players[(currentPlayer+1)%2], X, Y, playerColors[(currentPlayer+1)%2]);
+    drawPlayer(players[currentPlayer], X, Y, playerColors[currentPlayer]);
   }
   
-  float getPlayerPositionX() {
-    return animation? oldplayerCoordX:playerCoordX;
+  float getPlayerPositionX(Player player) {
+    return player.animation? player.oldpCoordX : player.pCoordX;
   }
   
-  float getPlayerPositionY() {
-    return animation? oldplayerCoordY:playerCoordY;
+  float getPlayerPositionY(Player player) {
+    return player.animation? player.oldpCoordY : player.pCoordY;
   }
 }
 

@@ -42,7 +42,7 @@ HashMap<String, Integer> treasure = new HashMap<String, Integer>() {{
 
 Menu menu = new Menu();
 PFont zorque;
-Maze[] mazes = new Maze[2];
+Maze maze;
 SoundFile swoosh, currentBackgroundMusic, menutoggle;
 SoundFile[] backgroundMusic = new SoundFile[3];
 Player[] players = new Player[2];
@@ -68,8 +68,7 @@ void setup() {
 void initGame() {
   players[0] = new Player(Samples.startXA0, Samples.startYA0, playerInitialSize, playerBreatheIntensity, playerBreatheSpeed);
   players[1] = new Player(Samples.startXB0, Samples.startYB0, playerInitialSize, playerBreatheIntensity, playerBreatheSpeed);
-  mazes[0] = new Maze(Samples.maze0, Samples.endX0, Samples.endY0, tileSize);
-  mazes[1] = new Maze(Samples.maze0, Samples.endX0, Samples.endY0, tileSize);
+  maze = new Maze(Samples.maze0, Samples.endX0, Samples.endY0, tileSize);
   playerWon = -1;
 }
 
@@ -78,28 +77,27 @@ void draw() {
   translate(width/2, height/2);
   noStroke();
   
-  mazes[0].draw(-550, -180, tileRadius, tileGap, playerColors[0]);
-  mazes[1].draw(80, -180, tileRadius, tileGap, playerColors[1]);
+  maze.draw(-550, -180, tileRadius, tileGap);
   
   // Das fügt dunkelheit ins spiel ein
-  applyAreaFilter(mazes[currentPlayer].getPlayerPositionX(), mazes[currentPlayer].getPlayerPositionY(), 0.25, showingMenu? 0 : 1.8);
+  applyAreaFilter(maze.getPlayerPositionX(players[currentPlayer]), maze.getPlayerPositionY(players[currentPlayer]), 0.25, showingMenu? 0 : 1.8);
   breathePlayer();
   if (showingMenu) menu.drawMenu();
   if (playerWon >= 0) menu.drawWon(playerNames[currentPlayer], playerColors[currentPlayer]);
   
-  //manageBackgroundMusic();
+  manageBackgroundMusic();
   
   //if (frameCount % 30 == 0) println(frameRate, " FPS");
 }
 
 // Wenn eine Taste gedrückt wurde
 void keyPressed() {
-  if (mazes[currentPlayer].animation) return;
+  if (players[currentPlayer].animation) return;
   switch (key) {
-    case 'w': mazes[currentPlayer].sprintPlayer('n'); break;
-    case 's': mazes[currentPlayer].sprintPlayer('s'); break;
-    case 'a': mazes[currentPlayer].sprintPlayer('w'); break;
-    case 'd': mazes[currentPlayer].sprintPlayer('o'); break;
+    case 'w': maze.sprintPlayer('n'); break;
+    case 's': maze.sprintPlayer('s'); break;
+    case 'a': maze.sprintPlayer('w'); break;
+    case 'd': maze.sprintPlayer('o'); break;
     case 'm': 
       showingMenu = !showingMenu; 
       menutoggle.play();

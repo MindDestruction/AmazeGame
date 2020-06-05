@@ -3,6 +3,7 @@ class Player {
   int playerX, playerY, oldPlayerX, oldPlayerY, startX, startY;
   float size, initialSize, oldpCoordX, oldpCoordY, pCoordX, pCoordY;
   float breatheIntensity, breatheSpeed;
+  boolean animation = false, animationStart = false;
   public Player(int startX, int startY, float size, float breatheIntensity, float breatheSpeed) {
     
     this.startX = this.playerX = this.oldPlayerX = startX;
@@ -10,7 +11,6 @@ class Player {
     this.size = this.initialSize = size;
     this.breatheIntensity = breatheIntensity;
     this.breatheSpeed = breatheSpeed;
-    
     
   }
   
