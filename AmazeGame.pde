@@ -10,25 +10,43 @@ import processing.sound.*;
     Leertaste: Spieler wechsel
   IDEEN:
    - Sich bewegende Wände
-   - Taschenlampe
-   -  mehrere Hinweise
+   - Taschenlampen (zeitlich)
+   - Hinweise
    - Ein Zug aussetzten
    - Sounds
+   - Weniger Sicht
+   - Punkte (Item Kosten + Cooldown)
+   - Icons
+   - Musik leiser
+   - Lichkegel durch Blickrichtung ersetzen
+   - Tipps kosten
+   - Züge Counter
+   - Zug Timer
+   - Game Timer
+  Strategie:
+   - Items
+    - zu einander
+    - unabhängig
+   - Pfeile zueinander
 */
 
 // Einstellungen
 int currentPlayer = 0;
 int maxPlayer = 2;
 float tileSize = 35;
-float tileRadius = 6;
-float tileGap = 2;
+float tileRadius = 0;
+float tileGap = 0;
 float playerBreatheIntensity = 1.5;
 float playerBreatheSpeed = 2.5;
 float playerSpeed = 0.18;
 float playerInitialSize = tileSize / 2f;
 float currentBackgroundVolume = 0;
 float volumeFadeSpeed = 0.001;
+<<<<<<< Updated upstream
 final float maxVolume = 0.4;
+=======
+float maxVolume = 0.2;
+>>>>>>> Stashed changes
 boolean showingMenu = true;
 color[] playerColors = { color(0, 102, 153), color(183, 21, 64) };
 String[] playerNames = {"Bjørn", "Alfhild"};
@@ -89,7 +107,11 @@ void draw() {
   maze.draw(-550, -180, tileRadius, tileGap);
   
   // Das fügt dunkelheit ins spiel ein
+<<<<<<< Updated upstream
   applyAreaFilter(maze.getPlayerPositionX(players[currentPlayer]), maze.getPlayerPositionY(players[currentPlayer]), 0.25, showingMenu? 0 : 1.8);
+=======
+  applyAreaFilter(mazes[currentPlayer].getPlayerPositionX(), mazes[currentPlayer].getPlayerPositionY(), 0.14, showingMenu? 0 : 3);
+>>>>>>> Stashed changes
   breathePlayer();
   if (showingMenu) menu.drawMenu();
   if (playerWon >= 0) menu.drawWon(playerNames[currentPlayer], playerColors[currentPlayer]);
@@ -101,6 +123,10 @@ void draw() {
 
 // Wenn eine Taste gedrückt wurde
 void keyPressed() {
+<<<<<<< Updated upstream
+=======
+  //if (mazes[currentPlayer].animation) return;
+>>>>>>> Stashed changes
   switch (key) {
     case 'w': maze.sprintPlayer('n'); break;
     case 's': maze.sprintPlayer('s'); break;

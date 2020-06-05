@@ -88,12 +88,21 @@ class Maze {
   void drawPlayer(Player player, int X, int Y, color playerColor) {
     
     // Wenn animiert wird, sollen die Koordinaten nicht immer zurückgesetzt werden
+<<<<<<< Updated upstream
     if (player.animationStart || !player.animation) {
       player.animationStart = false;
       player.pCoordX = (player.playerX+1)*tileSize + X + 2*player.playerX - tileSize/2;
       player.pCoordY = (player.playerY+1)*tileSize + Y + 2*player.playerY - tileSize/2;
       player.oldpCoordX = (player.oldPlayerX+1)*tileSize + X + 2*player.oldPlayerX - tileSize/2;
       player.oldpCoordY = (player.oldPlayerY+1)*tileSize + Y + 2*player.oldPlayerY - tileSize/2;
+=======
+    if (animationStart || !animation) {
+      animationStart = false;
+      playerCoordX = (playerX+1)*tileSize + X + tileGap*playerX - tileSize/2;
+      playerCoordY = (playerY+1)*tileSize + Y + tileGap*playerY - tileSize/2;
+      oldplayerCoordX = (oldPlayerX+1)*tileSize + X + tileGap*oldPlayerX - tileSize/2;
+      oldplayerCoordY = (oldPlayerY+1)*tileSize + Y + tileGap*oldPlayerY - tileSize/2;
+>>>>>>> Stashed changes
     }
     
     // Ändere Koordinaten um ein kleines Stückchen (Animation)
@@ -150,9 +159,9 @@ class Maze {
 }
 
 float getAbsoluteCoordinatesFromMazeX(int x, float offX) {
-  return (x+1)*tileSize + offX + 2*x - tileSize/2;
+  return (x+1)*tileSize + offX + tileGap*x - tileSize/2;
 }
   
 float getAbsoluteCoordinatesFromMazeY(int y, float offY) {
-  return (y+1)*tileSize + offY + 2*y - tileSize/2;
+  return (y+1)*tileSize + offY +tileGap*y - tileSize/2;
 }
